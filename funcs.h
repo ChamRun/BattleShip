@@ -35,7 +35,7 @@ void addShip(struct ship *list, struct ship *newShip){
 }
 
 struct player{
-    char name[20], ground[10][10];
+    char name[20], ground[10][11];
     int points;
 };
 /*
@@ -48,10 +48,33 @@ void valider(int size, int *start, int *end){
     return 0;
 }
 
-void fill(char ground[][10], int a, int b){
+void fill(char ground[][11], int a, int b){
 }
 */
-void put5(char ground[][10], struct ship *list, int xSta, int ySta, int xEnd, int yEnd){
+
+
+void enemyEzPrinter(char ground[][11]){
+    printf("  a b c d e f g h i j\n");  
+    for (int i = 0; i < 10; i++)    {
+        printf("%d ", i);
+        for (int j = 0; j < 10; j++)        {
+            if (ground[i][j] == 'w')            {
+                printf("~ ");
+            }
+            else if ((ground[i][j] == '~') || (ground[i][j] == 's'))            {
+                printf(". ");
+            }
+            else{
+                printf("%c ", ground[i][j]);
+            }
+        } 
+        printf("\n");      
+    }
+    printf("\n");
+}
+
+
+void put5(char ground[][11], struct ship *list, int xSta, int ySta, int xEnd, int yEnd){
     struct ship *temp = makeShip(5);
     int i = 0;
 
@@ -68,7 +91,7 @@ void put5(char ground[][10], struct ship *list, int xSta, int ySta, int xEnd, in
     addShip(list, temp);
     
 }
-void put3(char ground[][10], struct ship *list, int xSta, int ySta, int xEnd, int yEnd){
+void put3(char ground[][11], struct ship *list, int xSta, int ySta, int xEnd, int yEnd){
     struct ship *temp = makeShip(3);
     int i = 0;
     
@@ -82,7 +105,7 @@ void put3(char ground[][10], struct ship *list, int xSta, int ySta, int xEnd, in
     }    
     addShip(list, temp);
 }
-void put2(char ground[][10], struct ship *list, int xSta, int ySta, int xEnd, int yEnd){
+void put2(char ground[][11], struct ship *list, int xSta, int ySta, int xEnd, int yEnd){
     struct ship *temp = makeShip(2);
     int i = 0;
     
@@ -96,7 +119,7 @@ void put2(char ground[][10], struct ship *list, int xSta, int ySta, int xEnd, in
     }
     addShip(list, temp);    
 }
-void put1(char ground[][10], struct ship *list, int x, int y){
+void put1(char ground[][11], struct ship *list, int x, int y){
     struct ship *temp = makeShip(1);
     temp->addr[0]->x = x;
     temp->addr[0]->y = y;
@@ -104,10 +127,13 @@ void put1(char ground[][10], struct ship *list, int x, int y){
     ground[x][y] = 's';
 
 }
-void randomFiller(char ground[][10], struct ship *list){
+void randomFiller(char ground[][11], struct ship *list){
     for (int i = 0; i < 10; i++)    {
-        for (int j = 0; j < 10; j++)        {
+        for (int j = 0; j < 11; j++)        {
             ground[i][j] = '~';
+            if (j == 10)            {
+                ground[i][j] = '\0';
+            }
         }     
     }
     put5(ground, list, 0, 0, 4, 0);
@@ -121,10 +147,15 @@ void randomFiller(char ground[][10], struct ship *list){
     put1(ground, list, 4, 9);
     put1(ground, list, 2, 9);
 }
-void secrandomFiller(char ground[][10], struct ship *list){
+
+void secrandomFiller(char ground[][11], struct ship *list){
     for (int i = 0; i < 10; i++)    {
-        for (int j = 0; j < 10; j++)        {
+        for (int j = 0; j < 11; j++)        {
             ground[i][j] = '~';
+            if (j == 10)            {
+                ground[i][j] = '\0';
+            }
+            
         }     
     }
     put5(ground, list, 2, 2, 6, 2);
@@ -139,7 +170,7 @@ void secrandomFiller(char ground[][10], struct ship *list){
     put1(ground, list, 9, 7);
 }
 
-void myPrinter(char ground[][10]){
+void myPrinter(char ground[][11]){
     printf("    a | b | c | d | e | f | g | h | i | j |\n--|---|---|---|---|---|---|---|---|---|---|\n");  
     for (int i = 0; i < 10; i++)    {
         printf("%d | ", i);
@@ -157,7 +188,7 @@ void myPrinter(char ground[][10]){
     }
     printf("\n\n");
 }
-void enemyPrinter(char ground[][10]){
+void enemyPrinter(char ground[][11]){
     printf("    a | b | c | d | e | f | g | h | i | j |\n--|---|---|---|---|---|---|---|---|---|---|\n");  
     for (int i = 0; i < 10; i++)    {
         printf("%d | ", i);
@@ -189,7 +220,7 @@ void removeShip(struct ship **list, struct ship *toDele){
     }
     poList->next = poList->next->next;
 }
-void markSunk(char ground[][10], struct ship *theSunk){
+void markSunk(char ground[][11], struct ship *theSunk){
     
     for (int i = 0; i < theSunk->all; i++)    {
         int px = -(theSunk->addr[i]->x), py = theSunk->addr[i]->y;
@@ -302,12 +333,16 @@ int shot(struct player *turner, struct ship *list){
     struct player *shotter = turner;
     int x, y;
     char temp;
-    //printf("a-i: ");
-    //printf("0-9: ");
-    //printf("Shot on:  ");
-    //printf("a-z ?: ");
+    
+    
+    //printf("gonna shot...\n");
+
+    takeXY:
     scanf("%c", &temp);
     scanf("%d", &x);
+    getchar();
+    y = charToInt(temp);
+    printf("%d - %d     on: %s\n", x, y, shotter->name);
 
     if (x == -2)    {
         printf("gonna expload all the things...\n");
@@ -323,41 +358,42 @@ int shot(struct player *turner, struct ship *list){
         return 23;
     }
     
-    //printf("Took.\n");
-    getchar();
-    //printf("got char\n");
-    y = charToInt(temp);
     
-    //printf("0.  %d : %d\n", y, x);    
-    while ((9 < x) || (x < 0) || (9 < y) || (y < 0) || ((shotter->ground[x][y] != 's') && (shotter->ground[x][y] != '~')))    {
-        //printf("1.  %d : %d\n", y, x);
-        //printf("retake!\n");
-        printf("NOT VALID! Try Again: \n");
-        //printf("a-z ?: ");
-        scanf("%c", &temp);
-        //printf("0-9 ?: ");
-        scanf("%d", &x);
-        getchar();
-        //printf("2.  %d : %d\n", y, x);
-        y = charToInt(temp);
-        //printf("3.  %d : %d\n", y, x);
+    if ((9 < x) || (x < 0) || (9 < y) || (y < 0))    {
+        printf("Out of Sea! Try Again:\n");
+        goto takeXY;
     }
+
+    if ((shotter->ground[x][y] != 's') && (shotter->ground[x][y] != '~')){
+        printf("here has been shotted before (its '%c'). Try Again:\n", shotter->ground[x][y]);
+        goto takeXY;
+    }
+
+    //printf("%d - %d     on: %s\n", x, y, shotter->name);
+
     if (shotter->ground[x][y] == 's')    {
         shotter->ground[x][y] = '#';
         //printf("to Expload...");
         //getchar();
         
-        //enemyEZrinter(shotter.ground);
+        //enemyEzPrinter(shotter.ground);
         //getchar();
         printf("prize shot\n");
         return expload(list, x, y, shotter);
     }
+
+    //printf("%d - %d     on: %s\n", x, y, shotter->name);
+
     if (shotter->ground[x][y] == '~')    {
         shotter->ground[x][y] = 'w';
         return 0;
     }
+
+    //printf("%d - %d     on: %s\n", x, y, shotter->name);
+
 }
-void randShot(struct player *turner, struct ship *list){
+
+int randShot(struct player *turner, struct ship *list){
     struct player *shotter = turner;
     int x, y;
     srand(time(NULL));
@@ -370,16 +406,11 @@ void randShot(struct player *turner, struct ship *list){
 
     if (shotter->ground[x][y] == 's')    {
         shotter->ground[x][y] = '#';
-        printf("to Expload...");
-        getchar();
-        expload(list, x, y, shotter);
-        enemyEZrinter(shotter->ground);
-        getchar();
-        randShot(shotter, list);
+        return expload(list, x, y, shotter);
     }
     if (shotter->ground[x][y] == '~')    {
         shotter->ground[x][y] = 'w';
-        return;
+        return 0;
     } 
 }
 
@@ -404,7 +435,7 @@ void shipPrinter(struct ship *theShip){
     
 }
 
-void myEZprinter(char ground[][10]){
+void myEZprinter(char ground[][11]){
     printf("  a b c d e f g h i j\n");  
     for (int i = 0; i < 10; i++)    {
         printf("%d ", i);
@@ -421,25 +452,6 @@ void myEZprinter(char ground[][10]){
         printf("\n");
     }
     printf("\n\n");
-}
-void enemyEZrinter(char ground[][10]){
-    printf("  a b c d e f g h i j\n");  
-    for (int i = 0; i < 10; i++)    {
-        printf("%d ", i);
-        for (int j = 0; j < 10; j++)        {
-            if (ground[i][j] == 'w')            {
-                printf("~ ");
-            }
-            else if ((ground[i][j] == '~') || (ground[i][j] == 's'))            {
-                printf(". ");
-            }
-            else{
-                printf("%c ", ground[i][j]);
-            }
-        } 
-        printf("\n");      
-    }
-    printf("\n");
 }
 
 void printScores(){
@@ -491,7 +503,7 @@ void printScores(){
     printf("\n\n");   
 }
 
-void writePoints(struct player firP, struct player secP){
+void writePoints (struct player firP, struct player secP){
     printf("gonna write points...\n");
     FILE *users;
     users = fopen("users.txt", "r+");
@@ -511,4 +523,66 @@ void writePoints(struct player firP, struct player secP){
         }
     }
     fclose(users);
+}
+
+void oneTurn (struct player *me, struct player *you, struct ship *yourShips, int n){
+    
+    //struct player *me = firPl;
+    //struct player * you = secPl;
+    if (n == 0) {
+        printf("%s's point: %d    %s's point: %d\n", me->name, me->points, you->name, you->points);
+        printf("\n");
+        printf("%s's sea:\n", me->name);
+        enemyEzPrinter(me->ground);
+        printf("\n%s's sea:\n", you->name);
+        enemyEzPrinter(you->ground);
+        printf("%s's turn:\n", me->name);
+        int n = shot(you, yourShips);
+
+        while (n != 0)  {
+            me->points += n;
+            //system("cls");
+            printf("%s's point: %d    %s's point: %d\n", me->name, me->points, you->name, you->points);
+            printf("\n");
+            printf("%s's sea:\n", me->name);
+            enemyEzPrinter(me->ground);
+            printf("\n%s's sea:\n", you->name);
+            enemyEzPrinter(you->ground);
+            printf("%s's prize:\n", me->name);
+            n = shot(you, yourShips);
+        }
+    }
+
+    if (n == 1) {
+        printf("%s's point: %d    %s's point: %d\n", you->name, you->points, me->name, me->points);
+        printf("\n");
+        printf("\n%s's sea:\n", you->name);
+        enemyEzPrinter(you->ground);
+        printf("%s's sea:\n", me->name);
+        enemyEzPrinter(me->ground);
+        printf("%s's turn:\n", me->name);
+        int n = shot(you, yourShips);
+
+        while (n != 0)  {
+            me->points += n;
+            //system("cls");
+            printf("%s's point: %d    %s's point: %d\n", you->name, you->points, me->name, me->points);
+            printf("\n");
+            printf("\n%s's sea:\n", you->name);
+            enemyEzPrinter(you->ground);
+            printf("%s's sea:\n", me->name);
+            enemyEzPrinter(me->ground);
+            printf("%s's prize:\n", me->name);
+            n = shot(you, yourShips);
+        }
+    }
+
+    if (n == 2)     {
+        int n = randShot(you, yourShips);
+
+        while (n != 0)  {
+            me->points += n;
+            n = randShot(you, yourShips);
+        }
+    }
 }
